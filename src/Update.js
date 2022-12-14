@@ -2,10 +2,12 @@ import * as R from 'ramda';
 
 const MSGS = {
   SHOW_FORM: 'SHOW_FORM',
-  MEAL_INPUT: 'MEAL_INPUT',
-  CALORIES_INPUT: 'CALORIES_INPUT',
-  SAVE_MEAL: 'SAVE_MEAL',
-  DELETE_MEAL: 'DELETE_MEAL',
+  FRONT_INPUT: 'FRONT_INPUT',
+  BACK_INPUT: 'BACK_INPUT',
+  SAVE_FRONT: 'SAVE_FRONT',
+  DELETE_CARD: 'DELETE_CARD',
+  UPDATE_BACK: 'UPDATE_BACK',
+  SAVE_BACK: 'SAVE_BACK'
 };
 
 export function showFormMsg(showForm) {
@@ -15,25 +17,26 @@ export function showFormMsg(showForm) {
   };
 }
 
-export function mealInputMsg(description) {
+export function frontInputMsg(description) {
   return {
-    type: MSGS.MEAL_INPUT,
+    type: MSGS.FRONT_INPUT,
     description,
   };
 }
 
-export function caloriesInputMsg(calories) {
+export function backInputMsg(back) {
   return {
-    type: MSGS.CALORIES_INPUT,
-    calories,
+    type: MSGS.BACK_INPUT,
+    back,
   };
 }
 
-export const saveMealMsg = { type: MSGS.SAVE_MEAL };
+export const saveFrontMsg = { type: MSGS.SAVE_FRONT };
+export const saveBackMsg = { type: MSGS.SAVE_BACK };
 
-export function deleteMealMsg(id) {
+export function deleteCardMsg(id) {
   return {
-    type: MSGS.DELETE_MEAL,
+    type: MSGS.DELETE_CARD,
     id,
   };
 }
@@ -42,44 +45,49 @@ function update(msg, model) {
   switch (msg.type) {
     case MSGS.SHOW_FORM: {
       const { showForm } = msg;
-      return { ...model, showForm, description: '', calories: 0 };
+      return { ...model, showForm, description: '', };
     }
-    case MSGS.MEAL_INPUT: {
+    case MSGS.FRONT_INPUT: {
       const { description } = msg;
       return { ...model, description };
     }
-    case MSGS.CALORIES_INPUT: {
-      const calories = R.pipe(
-        parseInt, 
-        R.defaultTo(0),
-      )(msg.calories);
-      return { ...model, calories };
+    case MSGS.BACK_INPUT: {
+      const { back } = msg;
+      return { ...model, back };
     }
-    case MSGS.SAVE_MEAL: {
+    case MSGS.SAVE_FRONT: {
       const updatedModel = add(msg, model);
       return updatedModel;
     }
-    case MSGS.DELETE_MEAL: {
+    case MSGS.SAVE_BACK: {
+      const updatedModel = add(msg, model);
+      return updatedModel;
+    }
+    case MSGS.DELETE_CARD: {
       const { id } = msg;
-      const meals = R.filter(
-        meal => meal.id !== id
-      , model.meals);
-      return { ...model, meals };
+      const cards = R.filter(
+        card => card.id !== id
+      , model.cards);
+      return { ...model, cards };
+    }
+    case MSGS.UPDATE_BACK: {
+      const { description } = msg;
+      return { ...model, description };
     }
   }
   return model;
 }
 
 function add(msg, model) {
-  const { nextId, description, calories } = model;
-  const meal = { id: nextId, description, calories };
-  const meals = [...model.meals, meal]
+  const { nextId, description, back } = model;
+  const card = { id: nextId, description, back };
+  const cards = [...model.cards, card]
   return {
     ...model,
-    meals,
+    cards,
     nextId: nextId + 1,
     description: '',
-    calories: 0,
+    back: '',
     showForm: false,
   };
 }

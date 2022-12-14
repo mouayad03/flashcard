@@ -1,13 +1,13 @@
 const initModel = {
   description: '',
-  calories: 0,
+  back: '',
   showForm: false,
   nextId: 3,
   editId: null,
-  meals: [{
+  cards: [{
     id: 1,
     description: 'Hallo',
-    calories: 0
+    back: ''
   }],
 };
 
